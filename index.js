@@ -1,5 +1,7 @@
 import express from 'express'
 
+const categories = ['Food', 'Gaming', 'Coding', 'Other']
+
 const app = express()
 const port = 4001
 
