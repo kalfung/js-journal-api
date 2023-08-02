@@ -17,4 +17,14 @@ app.get('/categories', (req, res) => res.send(categories))
 
 app.get('/entries', (req, res) => res.send(entries))
 
+app.post('/entries', (req, res) => {
+  // 1. Retrieve data from request (req)
+  console.log(req.body)
+  // 2. Parse/validate it
+  // 3. Push the new entry to the entries array
+  // 4. Send the new entry with 201 status
+  res.status(201).send('POST to /entries')
+}
+)
+
 app.listen(port)
