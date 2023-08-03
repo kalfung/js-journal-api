@@ -43,13 +43,17 @@ app.get('/entries/:id', (req, res) => {
 
 app.post('/entries', async (req, res) => {
   // 1. Retrieve data from request (req)
-  console.log(req.body)
+  // console.log(req.body)
   // 2. TODO: Parse/validate it
   // 3. Push the new entry to the entries array
   // entries.push(req.body)
-  const insertedEntry = await EntryModel.create(req.body)
+  try {
+   const insertedEntry = await EntryModel.create(req.body)
   // 4. Send the new entry with 201 status
-  res.status(201).send(insertedEntry)
+    res.status(201).send(insertedEntry)
+  } catch (err) { 
+    res.status(500).send({ error: err.message})
+  }
 })
 
 app.listen(port)
