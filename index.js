@@ -19,12 +19,18 @@ mongoose.connect('mongodb+srv://14322:kalelfung0@cluster0.s9vg5pu.mongodb.net/jo
   .catch(err => console.error(err))
 
 // Making new instance of schema class
-const entriesSchema = new mongoose.Schema({
+const entrySchema = new mongoose.Schema({
   category: { type: String, required: true },
   content: { type: String, required: true }
 })
 
-const EntryModel = mongoose.model('Entry', entriesSchema)
+const EntryModel = mongoose.model('Entry', entrySchema)
+
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true }
+})
+
+const CategoryModel = mongoose.model('Category', categorySchema)
 
 const app = express()
 const port = 4001
@@ -33,7 +39,7 @@ app.use(express.json())
 
 app.get('/', (req, res) => res.send({ info: 'Journal API' }))
 
-app.get('/categories', (req, res) => res.send(categories))
+app.get('/categories', async (req, res) => res.send(await CategoryModel.find()))
 
 app.get('/entries', async (req, res) => res.send(await EntryModel.find()))
 
