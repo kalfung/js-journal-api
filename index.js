@@ -20,17 +20,32 @@ mongoose.connect('mongodb+srv://14322:kalelfung0@cluster0.s9vg5pu.mongodb.net/jo
 
 // Making new instance of schema class
 const entrySchema = new mongoose.Schema({
-  category: { type: String, required: true },
+  category: { type: mongoose.ObjectId, ref: 'Category' },
   content: { type: String, required: true }
 })
 
 const EntryModel = mongoose.model('Entry', entrySchema)
 
 const categorySchema = new mongoose.Schema({
-  name: { type: String, required: true }
+  category: { type: String, required: true, unique: true }
 })
 
 const CategoryModel = mongoose.model('Category', categorySchema)
+
+// We could use sub-documents for one-to-many or one-to-one relationships
+// CategoryModel.create({
+//   name: 'Foo',
+//   entries: [
+//     { content: 'Bar' },
+//     { content: 'Bat' }
+//   ]
+// })
+
+// async function addEntry() {
+//   const theCat = await CategoryModel.findOne({ name: 'Coding' })
+//   EntryModel.create({ content: 'Testing category ref', category: theCat._id })
+// }
+// addEntry()
 
 const app = express()
 const port = 4001
@@ -65,9 +80,14 @@ app.post('/entries', async (req, res) => {
   // 3. Push the new entry to the entries array
   // entries.push(req.body)
   try {
-    const insertedEntry = await EntryModel.create(req.body)
-  // 4. Send the new entry with 201 status
-    res.status(201).send(insertedEntry)
+    const theCat = await CategoryModel.findOne({ category : req.body.category })
+    if (theCat) {
+      const insertedEntry = await EntryModel.create({ content: req.body.content, category: theCat._id })
+      // 4. Send the new entry with 201 status
+      res.status(201).send(insertedEntry)
+    } else {
+      res.status(400).send({ error: 'Category not found' })
+    }
   } catch (err) { 
     res.status(500).send({ error: err.message})
   }
