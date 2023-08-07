@@ -73,4 +73,18 @@ app.post('/entries', async (req, res) => {
   }
 })
 
+app.put('/entries/:id', async (req, res) => {
+  try {
+    const entry = await EntryModel.findByIdAndUpdate(req.params.id, req.body, { new: true})
+    if (entry) {
+      res.send(entry)
+    } else {
+      res.status(404).send({ error: 'Entry not found' })
+    }
+  }
+  catch (err) {
+    res.status(500).send({ error: err.message })
+  }
+})
+
 app.listen(port)
