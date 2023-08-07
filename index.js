@@ -87,4 +87,18 @@ app.put('/entries/:id', async (req, res) => {
   }
 })
 
+app.delete('/entries/:id', async (req, res) => {
+  try {
+    const entry = await EntryModel.findByIdAndDelete(req.params.id)
+    if (entry) {
+      res.sendStatus(200)
+    } else {
+      res.status(404).send({ error: 'Entry not found' })
+    }
+  }
+  catch (err) {
+    res.status(500).send({ error: err.message })
+  }
+})
+
 app.listen(port)
