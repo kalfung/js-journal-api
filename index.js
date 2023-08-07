@@ -1,7 +1,12 @@
 import express from 'express'
 import mongoose from 'mongoose'
 
-const categories = ['Food', 'Gaming', 'Coding', 'Other']
+const categories = [
+  { name: 'Food' },
+  { name: 'Gaming' },
+  { name: 'Gaming' },
+  { name: 'Other' }
+]
 
 const entries = [
     { category: 'Food', content: 'Dumplings are yummy!'},
@@ -30,14 +35,20 @@ app.get('/', (req, res) => res.send({ info: 'Journal API' }))
 
 app.get('/categories', (req, res) => res.send(categories))
 
-app.get('/entries', (req, res) => res.send(entries))
+app.get('/entries', async (req, res) => res.send(await EntryModel.find()))
 
-app.get('/entries/:id', (req, res) => {
-  const entry = entries[req.params.id]
-  if (entry) {
-  res.send(entry)
-  } else {
-    res.status(404).send({ error: 'Entry not found' })
+app.get('/entries/:id', async (req, res) => {
+  try {
+    const entry = await EntryModel.findById(req.params.id)
+    if (entry) {
+    res.send(entry)
+    } else {
+      res.status(404).send({ error: 'Entry not found' })
+    }
+  }
+
+  catch (err) {
+    res.status(500).send({ error: err.message })
   }
 })
 
@@ -48,7 +59,7 @@ app.post('/entries', async (req, res) => {
   // 3. Push the new entry to the entries array
   // entries.push(req.body)
   try {
-   const insertedEntry = await EntryModel.create(req.body)
+    const insertedEntry = await EntryModel.create(req.body)
   // 4. Send the new entry with 201 status
     res.status(201).send(insertedEntry)
   } catch (err) { 
