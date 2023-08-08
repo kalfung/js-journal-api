@@ -10,20 +10,20 @@
 // // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
 // // Select the database to use.
-use('journal');
+// use('journal');
 
-db.categories.drop(); // Drop categories collection
-db.createCollection('categories'); // Creates a collection called categories
-// inserts multiple documents into the collection
-db.getCollection('categories').insertMany([
-    { category: 'Food' },
-    { category: 'Gaming' },
-    { category: 'Coding' },
-    { category: 'Other' }
-])
+// db.categories.drop(); // Drop categories collection
+// db.createCollection('categories'); // Creates a collection called categories
+// // inserts multiple documents into the collection
+// db.getCollection('categories').insertMany([
+//     { name: 'Food' },
+//     { name: 'Gaming' },
+//     { name: 'Coding' },
+//     { name: 'Other' }
+// ])
 
-// equivalent to a select all in SQL
-db.categories.find()
+// // equivalent to a select all in SQL
+// db.categories.find()
 
 // // Insert a few documents into the sales collection.
 // db.getCollection('sales').insertMany([
