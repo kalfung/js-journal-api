@@ -1,5 +1,5 @@
 import express from 'express'
-import mongoose from 'mongoose'
+import { CategoryModel, EntryModel } from './db.js'
 
 const categories = [
   { name: 'Food' },
@@ -14,23 +14,7 @@ const entries = [
     { category: 'Gaming', content: 'Lalafells are great at gaming'}
   ]
 
-mongoose.connect('mongodb+srv://14322:kalelfung0@cluster0.s9vg5pu.mongodb.net/journal?retryWrites=true&w=majority')
-  .then(m => console.log(m.connection.readyState === 1 ? ' Mongoose connected!' : 'Mongoose failed to connect'))
-  .catch(err => console.error(err))
 
-// Making new instance of schema class
-const entrySchema = new mongoose.Schema({
-  category: { type: mongoose.ObjectId, ref: 'Category' },
-  content: { type: String, required: true }
-})
-
-const EntryModel = mongoose.model('Entry', entrySchema)
-
-const categorySchema = new mongoose.Schema({
-  category: { type: String, required: true, unique: true }
-})
-
-const CategoryModel = mongoose.model('Category', categorySchema)
 
 // We could use sub-documents for one-to-many or one-to-one relationships
 // CategoryModel.create({
@@ -95,7 +79,19 @@ app.post('/entries', async (req, res) => {
 
 app.put('/entries/:id', async (req, res) => {
   try {
-    const entry = await EntryModel.findByIdAndUpdate(req.params.id, req.body, { new: true})
+    const updatedEntry = {}
+    if (req.body.category) {
+      updatedEntry.content = req.body.content
+    }
+    if (req.body.category) {
+      const theCat = await CategoryModel.findOne({ category: req.body.category })
+      if (theCat) {
+        updatedEntry.category = theCat._id
+      } else {
+        res.status(400).send({ error: 'Category not found' })
+      }
+    }
+    const entry = await EntryModel.findByIdAndUpdate(req.params.id, updatedEntry, { new: true})
     if (entry) {
       res.send(entry)
     } else {
