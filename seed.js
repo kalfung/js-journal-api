@@ -7,6 +7,8 @@ const categories = [
     { name: 'Other' }
 ]
 
+// find a way to drop database first
+
 await CategoryModel.deleteMany()
 console.log('Deleted Categories')
 const cats = await CategoryModel.insertMany(categories)
